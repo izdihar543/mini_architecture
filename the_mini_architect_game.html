@@ -1,0 +1,1597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Mini Architect | Year 4 Mathematics (Topic 6: Space)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #1b2a4a;
+  --ink: #2c3e5a;
+  --muted: #62758d;
+  --sky-light: #f0f7ff;
+  --sky: #d9efff;
+  --blue: #3a9cd6;
+  --blue-dark: #216f9f;
+  --mint-light: #eafaf1;
+  --mint: #3ebd80;
+  --mint-dark: #278b5b;
+  --yellow-light: #fff8db;
+  --gold: #e5a824;
+  --coral-light: #ffede8;
+  --rose: #e06853;
+  --lav-light: #f3efff;
+  --purple: #7f5cc2;
+  --card-bg: rgba(255, 255, 255, 0.94);
+  --border: rgba(225, 235, 245, 0.95);
+  --shadow: 0 12px 32px rgba(35, 55, 85, 0.08), 0 2px 6px rgba(35, 55, 85, 0.04);
+  --shadow-lg: 0 20px 48px rgba(28, 48, 78, 0.13), 0 4px 12px rgba(28, 48, 78, 0.06);
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  min-height: 100%;
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 12% 14%, rgba(186, 233, 255, 0.65), transparent 32%),
+    radial-gradient(circle at 88% 22%, rgba(228, 217, 255, 0.6), transparent 34%),
+    radial-gradient(circle at 50% 95%, rgba(255, 242, 198, 0.5), transparent 36%),
+    #f5f9fc;
+  overflow-x: hidden;
+}
+
+/* Ambient Floating Orbs */
+.bg-orb {
+  position: fixed;
+  z-index: -1;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0.5;
+  filter: blur(2px);
+  animation: drift 14s ease-in-out infinite alternate;
+}
+.orb1 { width: 160px; height: 160px; background: #c3ecff; top: 10%; left: -40px; }
+.orb2 { width: 110px; height: 110px; background: #e5dbff; right: 2%; top: 45%; animation-delay: -5s; }
+.orb3 { width: 80px; height: 80px; background: #ffe7ad; bottom: 10%; left: 12%; animation-delay: -9s; }
+@keyframes drift {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(-28px) rotate(18deg); }
+}
+
+.app { max-width: 1240px; margin: 0 auto; padding: 16px 20px 48px; }
+
+/* Sticky Top Navigation Bar */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 10px 18px;
+  background: rgba(255, 255, 255, 0.90);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  position: sticky;
+  top: 10px;
+  z-index: 100;
+}
+.brand { display: flex; align-items: center; gap: 12px; cursor: pointer; user-select: none; }
+.brand-mark {
+  width: 44px; height: 44px; border-radius: 13px;
+  background: linear-gradient(135deg, #54b8e8, #886fd3);
+  display: grid; place-items: center;
+  box-shadow: 0 6px 14px rgba(90, 140, 215, 0.28);
+}
+.brand strong { display: block; letter-spacing: 0.02em; font-size: 14px; color: var(--navy); font-weight: 900; }
+.brand small { display: block; color: var(--muted); font-size: 9.5px; font-weight: 800; letter-spacing: 0.12em; }
+
+.nav { display: flex; align-items: center; gap: 6px; }
+.nav button {
+  border: 0; background: transparent; padding: 9px 14px; border-radius: 12px;
+  color: var(--muted); font-weight: 800; font-size: 12.5px; transition: 0.18s;
+}
+.nav button:hover, .nav button.active { background: #e7f4fe; color: var(--blue-dark); }
+
+.star-pill {
+  background: linear-gradient(135deg, #fff8db, #ffeaa6);
+  color: #8e6005; border: 1px solid #f6db88; border-radius: 999px;
+  padding: 7px 13px; font-size: 12px; font-weight: 900; letter-spacing: 0.04em;
+  display: flex; align-items: center; gap: 6px; box-shadow: 0 3px 8px rgba(220, 160, 20, 0.14);
+}
+.star-icon { font-size: 14px; display: inline-block; animation: spinStar 8s linear infinite; }
+@keyframes spinStar { 0% { transform: rotate(0); } 100% { transform: rotate(360deg); } }
+
+.tool-btn-small {
+  border: 1px solid #e1eaf3; background: #fff; border-radius: 999px;
+  padding: 7px 12px; font-weight: 800; font-size: 12px; color: var(--muted);
+  display: flex; align-items: center; gap: 5px; transition: 0.18s;
+}
+.tool-btn-small:hover { background: #f3f7fb; color: var(--navy); }
+
+main { margin-top: 20px; }
+.view { display: none; animation: pageIn 0.32s cubic-bezier(0.16, 1, 0.3, 1); }
+.view.active { display: block; }
+@keyframes pageIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Hero Banner */
+.hero {
+  display: grid; grid-template-columns: 1.08fr 0.92fr; gap: 24px; align-items: center;
+  background: linear-gradient(120deg, #e5f4ff 0%, #f1edff 55%, #fff1d4 100%);
+  border: 1.5px solid #ffffff; border-radius: 28px; padding: 36px;
+  overflow: hidden; box-shadow: var(--shadow-lg); position: relative;
+}
+.eyebrow { font-size: 10.5px; color: var(--blue-dark); letter-spacing: 0.18em; font-weight: 900; text-transform: uppercase; }
+.hero h1 { font-size: clamp(30px, 4.2vw, 50px); line-height: 1.05; margin: 12px 0; color: var(--navy); letter-spacing: -0.04em; font-weight: 900; }
+.hero h1 span { color: var(--blue); background: linear-gradient(135deg, #2e8fc8, #755ec2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.hero p { max-width: 530px; line-height: 1.68; color: #526782; font-size: 14.5px; margin: 0 0 20px; }
+
+.curriculum-tag {
+  background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(255, 255, 255, 0.95);
+  padding: 5px 10px; border-radius: 8px; font-size: 10.5px; font-weight: 800; color: var(--navy);
+}
+
+.primary-btn, .secondary-btn, .next-btn, .check-btn {
+  border: 0; border-radius: 14px; padding: 13px 20px; font-weight: 900; font-size: 13px;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1); display: inline-flex; align-items: center; gap: 7px;
+}
+.primary-btn { background: linear-gradient(135deg, #3da8dc, #2475ab); color: #fff; box-shadow: 0 8px 18px rgba(45, 130, 185, 0.28); }
+.primary-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(45, 130, 185, 0.34); filter: brightness(1.05); }
+.secondary-btn { background: #fff; color: var(--navy); border: 1px solid #dae5ee; box-shadow: 0 4px 10px rgba(40, 65, 95, 0.05); }
+.secondary-btn:hover { background: #f6faff; transform: translateY(-1px); }
+
+.hero-art { min-height: 280px; display: grid; place-items: center; position: relative; }
+.hero-art svg { width: 100%; max-width: 480px; filter: drop-shadow(0 18px 22px rgba(45, 75, 110, 0.14)); animation: floatScene 6s ease-in-out infinite alternate; }
+@keyframes floatScene { 0% { transform: translateY(0); } 100% { transform: translateY(-10px); } }
+
+.section-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; margin: 32px 4px 16px; }
+.section-head h2 { margin: 0; color: var(--navy); font-size: 22px; font-weight: 900; }
+.section-head p { margin: 5px 0 0; color: var(--muted); font-size: 13px; }
+.badge-count { font-size: 10px; font-weight: 900; letter-spacing: 0.08em; padding: 6px 10px; background: #eef5fc; border-radius: 99px; color: var(--blue-dark); }
+
+/* Mission Cards Grid */
+.mission-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.mission-card {
+  border-radius: 22px; background: var(--card-bg); border: 1.5px solid #ffffff;
+  box-shadow: var(--shadow); overflow: hidden; transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex; flex-direction: column; position: relative;
+}
+.mission-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+.mission-card.done-card { border-color: #b9e7ce; }
+.card-art { height: 155px; display: grid; place-items: center; overflow: hidden; position: relative; background: #eef7fc; }
+.card-art svg { width: 100%; height: 100%; }
+.card-body { padding: 16px; flex: 1; display: flex; flex-direction: column; }
+.card-tag { font-size: 9.5px; font-weight: 900; letter-spacing: 0.12em; color: var(--blue-dark); text-transform: uppercase; margin-bottom: 6px; }
+.card-body h3 { font-size: 15px; color: var(--navy); margin: 0 0 7px; font-weight: 900; line-height: 1.3; }
+.card-body p { font-size: 12px; line-height: 1.5; color: var(--muted); min-height: 50px; margin: 0 0 14px; }
+.card-foot { display: flex; align-items: center; justify-content: space-between; margin-top: auto; gap: 8px; }
+.card-status-pill { font-size: 10px; font-weight: 900; letter-spacing: 0.05em; padding: 5px 8px; border-radius: 8px; background: #edf3f8; color: var(--muted); }
+.card-status-pill.done { background: var(--mint-light); color: var(--mint-dark); }
+.launch-btn { border: 0; border-radius: 10px; padding: 8px 13px; background: #e5f3fc; color: var(--blue-dark); font-size: 11.5px; font-weight: 900; transition: 0.18s; }
+.launch-btn:hover { background: var(--blue); color: #fff; }
+.launch-btn.re-launch { background: #edf9f2; color: var(--mint-dark); }
+.launch-btn.re-launch:hover { background: var(--mint); color: #fff; }
+
+/* Info Strip */
+.info-strip { margin-top: 20px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.info-box {
+  padding: 15px 18px; border: 1.5px solid #fff; border-radius: 18px;
+  background: rgba(255, 255, 255, 0.85); display: flex; gap: 12px; align-items: center; box-shadow: var(--shadow);
+}
+.info-icon { width: 42px; height: 42px; border-radius: 13px; display: grid; place-items: center; font-size: 20px; flex-shrink: 0; }
+.info-box strong { display: block; color: var(--navy); font-size: 13px; font-weight: 900; }
+.info-box small { color: var(--muted); font-size: 11px; }
+
+/* Headers & Back */
+.page-title { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin: 6px 2px 18px; }
+.page-title h1 { margin: 4px 0; color: var(--navy); font-size: clamp(24px, 3.2vw, 34px); letter-spacing: -0.03em; font-weight: 900; }
+.page-title p { margin: 0; color: var(--muted); font-size: 13px; }
+.back-btn { border: 1px solid #dce6f0; background: #fff; border-radius: 13px; padding: 9px 15px; color: var(--ink); font-size: 12px; font-weight: 850; display: inline-flex; align-items: center; gap: 6px; transition: 0.18s; }
+.back-btn:hover { background: #f3f8fd; color: var(--navy); }
+
+/* Town Map View */
+.map-canvas-card {
+  background: linear-gradient(135deg, #d2edff 0%, #f0eafb 50%, #e1f7e8 100%);
+  border: 2px solid #ffffff; border-radius: 28px; padding: 24px; box-shadow: var(--shadow-lg);
+  margin-bottom: 20px; position: relative; overflow: hidden;
+}
+.town-island-art { width: 100%; max-height: 360px; display: grid; place-items: center; }
+.town-island-art svg { width: 100%; max-height: 360px; }
+.map-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.map-tile {
+  display: grid; grid-template-columns: 130px 1fr; gap: 16px; align-items: center;
+  border: 1.5px solid #ffffff; background: var(--card-bg); border-radius: 22px;
+  overflow: hidden; padding: 12px; box-shadow: var(--shadow); transition: 0.2s;
+}
+.map-tile:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+.map-tile .mini-scene { height: 115px; border-radius: 16px; overflow: hidden; background: #eef6fc; display: grid; place-items: center; }
+.map-tile h3 { margin: 0 0 5px; color: var(--navy); font-size: 15px; font-weight: 900; }
+.map-tile p { margin: 0 0 10px; color: var(--muted); font-size: 11.5px; line-height: 1.45; }
+.tile-status { display: inline-flex; align-items: center; gap: 4px; font-size: 9.5px; font-weight: 900; letter-spacing: 0.07em; text-transform: uppercase; padding: 5px 9px; border-radius: 99px; background: #eef3f7; color: var(--muted); }
+.tile-status.done { background: var(--mint-light); color: var(--mint-dark); }
+
+/* Mission / Gameplay Layout */
+.mission-progress { display: flex; gap: 8px; margin: 0 0 16px; }
+.progress-dot { height: 7px; flex: 1; border-radius: 99px; background: #dde7f0; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); position: relative; }
+.progress-dot.current { background: var(--blue); box-shadow: 0 0 0 3px rgba(58, 156, 214, 0.22); }
+.progress-dot.done { background: var(--mint); }
+
+.mission-layout { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(330px, 0.88fr); gap: 18px; align-items: start; }
+.scene-card, .task-card, .story-card { background: var(--card-bg); border: 1.5px solid #ffffff; border-radius: 24px; box-shadow: var(--shadow); overflow: hidden; }
+
+.scene-head { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; border-bottom: 1px solid #ebf2f8; background: #fafcff; }
+.scene-head strong { font-size: 13px; color: var(--navy); letter-spacing: 0.03em; display: flex; align-items: center; gap: 6px; }
+.scene-head .site-badge { font-size: 10px; font-weight: 900; padding: 4px 9px; border-radius: 8px; background: #e7f3fb; color: var(--blue-dark); text-transform: uppercase; }
+
+.scene-toolbar { padding: 8px 18px; display: flex; align-items: center; justify-content: space-between; gap: 10px; background: #f5f9fd; border-bottom: 1px solid #edf4fa; font-size: 11px; color: var(--muted); }
+.scene-toggle-btns { display: flex; gap: 6px; }
+.tool-btn { border: 1px solid #dae5ef; background: #fff; border-radius: 8px; padding: 5px 9px; font-size: 10.5px; font-weight: 800; color: var(--navy); transition: 0.15s; }
+.tool-btn.active { background: var(--blue); color: #fff; border-color: var(--blue); }
+
+.scene-wrap { padding: 16px; background: linear-gradient(145deg, #e8f6ff 0%, #f3efff 100%); position: relative; min-height: 330px; display: grid; place-items: center; }
+.scene-wrap svg { width: 100%; max-height: 410px; display: block; }
+.scene-caption { padding: 12px 20px; color: #556b84; font-size: 12px; line-height: 1.55; background: #fff; border-top: 1px solid #edf2f7; }
+
+/* Mascot Speech */
+.archie-speech { display: flex; align-items: center; gap: 12px; padding: 12px 18px; background: #fff8e3; border-bottom: 1px solid #f6ebc9; }
+.archie-avatar { width: 38px; height: 38px; border-radius: 50%; background: #ffd66b; display: grid; place-items: center; flex-shrink: 0; box-shadow: 0 3px 8px rgba(220, 160, 20, 0.22); font-size: 20px; }
+.archie-text { font-size: 11.5px; color: #755513; line-height: 1.45; margin: 0; }
+.archie-text strong { color: #543a05; font-weight: 900; }
+
+/* Task Card & Inputs */
+.task-card { padding: 22px; }
+.task-kicker { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.14em; font-weight: 950; color: var(--blue-dark); }
+.task-card h2 { margin: 6px 0 8px; color: var(--navy); font-size: 21px; font-weight: 900; }
+.task-card .scenario { font-size: 13px; color: #566b82; line-height: 1.65; margin: 0 0 16px; }
+
+.dimension-row { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 14px; }
+.dimension { background: #f4f9fd; border: 1px solid #e2edf6; border-radius: 12px; padding: 8px 12px; min-width: 92px; flex: 1; }
+.dimension small { display: block; color: #798fa6; font-size: 9.5px; text-transform: uppercase; font-weight: 900; letter-spacing: 0.08em; }
+.dimension strong { display: block; color: var(--blue-dark); font-size: 15px; margin-top: 2px; font-weight: 900; }
+
+.problem-box { background: #f8faff; border: 1.5px solid #e7eef8; border-radius: 16px; padding: 14px; margin: 12px 0; }
+.problem-box strong { display: block; color: var(--navy); font-size: 12.5px; margin-bottom: 6px; font-weight: 900; }
+.problem-box p { margin: 0; color: #596f88; font-size: 12.5px; line-height: 1.55; }
+
+.formula-line { background: linear-gradient(135deg, #fff8db, #fff2c2); color: #7b5608; border: 1px solid #f2df98; border-radius: 12px; padding: 10px 14px; font-size: 12px; font-weight: 900; margin: 12px 0; display: flex; align-items: center; gap: 8px; }
+
+.answer-group { margin: 14px 0; }
+.answer-label { display: block; color: var(--navy); font-size: 12px; font-weight: 900; margin-bottom: 6px; }
+.input-with-unit { position: relative; display: flex; align-items: center; }
+.answer-input { width: 100%; border: 2px solid #d9e5ef; border-radius: 14px; padding: 12px 64px 12px 14px; color: var(--navy); font-size: 16px; font-weight: 900; background: #fff; transition: 0.18s; }
+.answer-input:focus { border-color: var(--blue); outline: none; box-shadow: 0 0 0 4px rgba(58, 156, 214, 0.18); }
+.unit-badge { position: absolute; right: 14px; color: var(--muted); font-weight: 900; font-size: 13px; pointer-events: none; }
+.unit-note { font-size: 10.5px; color: #859bb0; margin: 5px 0 0; }
+
+.action-row { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+.check-btn { background: linear-gradient(135deg, #3487c2, #236e9f); color: #fff; flex: 1; justify-content: center; box-shadow: 0 6px 14px rgba(35, 110, 160, 0.25); }
+.check-btn:hover { filter: brightness(1.06); transform: translateY(-1px); }
+.hint-btn { background: #fff5d6; color: #88600a; border: 1.5px solid #f3e09f; border-radius: 14px; padding: 12px 16px; font-weight: 900; font-size: 12px; display: inline-flex; align-items: center; gap: 6px; transition: 0.18s; }
+.hint-btn:hover { background: #ffeaae; color: #614302; }
+
+.feedback { display: none; padding: 14px; border-radius: 14px; margin-top: 14px; font-size: 12.5px; line-height: 1.6; font-weight: 600; }
+.feedback.show { display: block; animation: pageIn 0.22s ease; }
+.feedback.good { background: #eaf8ef; color: #1d6c41; border: 1.5px solid #bcead0; }
+.feedback.bad { background: #fff1ec; color: #9b3d26; border: 1.5px solid #fad2c6; }
+.feedback.hint { background: #edf6ff; color: #20618d; border: 1.5px solid #cce5fa; }
+
+.explain { display: none; margin-top: 14px; padding: 15px; background: #f6f3ff; border: 1.5px solid #e5dcff; border-radius: 15px; color: #54497a; font-size: 12.5px; line-height: 1.65; }
+.explain.show { display: block; }
+.explain-step { margin: 5px 0; padding-left: 14px; position: relative; }
+.explain-step::before { content: "•"; position: absolute; left: 0; color: var(--purple); font-weight: 900; }
+
+.build-panel { display: none; margin-top: 16px; padding: 16px; border-radius: 18px; background: linear-gradient(125deg, #e3f9eb, #edf7ff); border: 1.5px solid #bcecd0; box-shadow: 0 8px 18px rgba(45, 150, 90, 0.1); }
+.build-panel.show { display: block; animation: pageIn 0.28s cubic-bezier(0.16, 1, 0.3, 1); }
+.build-panel strong { display: block; color: #1c7042; font-size: 14px; font-weight: 900; }
+.build-panel p { font-size: 12px; color: #456d56; line-height: 1.55; margin: 6px 0 14px; }
+.next-btn { width: 100%; background: linear-gradient(135deg, #3bb778, #269b5f); color: #fff; justify-content: center; box-shadow: 0 8px 18px rgba(40, 165, 95, 0.28); }
+.next-btn:hover { filter: brightness(1.05); transform: translateY(-1px); }
+
+/* How to Play Guide */
+.how-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.how-card { background: #fff; border: 1.5px solid #e7eff6; border-radius: 18px; padding: 18px; box-shadow: var(--shadow); transition: 0.2s; }
+.how-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.how-card b { display: block; color: var(--navy); font-size: 14px; margin: 10px 0 6px; font-weight: 900; }
+.how-card p { color: var(--muted); font-size: 12px; line-height: 1.6; margin: 0; }
+
+/* Completion View */
+.completion { max-width: 820px; margin: 30px auto; background: rgba(255, 255, 255, 0.95); border: 2px solid #ffffff; border-radius: 32px; padding: 40px 32px; text-align: center; box-shadow: var(--shadow-lg); position: relative; }
+.trophy { font-size: 68px; display: inline-block; animation: bounce 1.5s ease-in-out infinite; }
+@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+.completion h1 { font-size: 36px; color: var(--navy); margin: 10px 0; font-weight: 900; letter-spacing: -0.03em; }
+.completion p { color: var(--muted); line-height: 1.7; max-width: 580px; margin: 0 auto 20px; font-size: 14px; }
+.stat-row { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; margin: 24px 0; }
+.stat { padding: 16px 24px; border-radius: 16px; background: #f3f9fe; border: 1px solid #e3eff8; min-width: 140px; }
+.stat strong { display: block; color: var(--blue-dark); font-size: 26px; font-weight: 900; }
+.stat small { color: #74899e; font-weight: 900; font-size: 10.5px; letter-spacing: 0.08em; }
+.town-showcase { background: linear-gradient(135deg, #e0f3ff, #f2eeff, #e7f9ee); border-radius: 24px; padding: 20px; margin: 24px 0; border: 1.5px solid #fff; }
+
+.footer { text-align: center; color: #90a3b8; font-size: 11px; font-weight: 700; margin-top: 36px; letter-spacing: 0.05em; }
+
+/* Confetti Canvas */
+#confettiCanvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999; }
+
+/* Custom Modal Dialog */
+.modal-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(15, 25, 40, 0.45);
+  backdrop-filter: blur(4px); z-index: 999; place-items: center; padding: 16px;
+}
+.modal-overlay.active { display: grid; animation: pageIn 0.2s ease; }
+.modal-box {
+  background: #fff; border-radius: 24px; max-width: 420px; width: 100%;
+  padding: 24px; text-align: center; box-shadow: var(--shadow-lg); border: 2px solid #fff;
+}
+.modal-box h3 { margin: 0 0 8px; color: var(--navy); font-size: 20px; font-weight: 900; }
+.modal-box p { color: var(--muted); font-size: 13px; line-height: 1.5; margin: 0 0 20px; }
+.modal-actions { display: flex; gap: 10px; justify-content: center; }
+
+@media(max-width: 960px) {
+  .mission-grid { grid-template-columns: repeat(2, 1fr); }
+  .hero { grid-template-columns: 1fr; padding: 28px; }
+  .hero-art { min-height: 220px; }
+  .mission-layout { grid-template-columns: 1fr; }
+  .map-grid { grid-template-columns: 1fr; }
+}
+@media(max-width: 640px) {
+  .app { padding: 12px 14px 36px; }
+  .topbar { padding: 10px 14px; }
+  .brand strong { font-size: 12.5px; }
+  .brand small { display: none; }
+  .nav { display: none; }
+  .mission-grid { grid-template-columns: 1fr; }
+  .info-strip { grid-template-columns: 1fr; }
+  .how-grid { grid-template-columns: 1fr; }
+  .completion { padding: 26px 16px; }
+  .map-tile { grid-template-columns: 100px 1fr; }
+  .map-tile .mini-scene { height: 95px; }
+}
+@media(prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="confettiCanvas"></canvas>
+<div class="bg-orb orb1"></div>
+<div class="bg-orb orb2"></div>
+<div class="bg-orb orb3"></div>
+
+<div class="app">
+  <!-- TOP NAVIGATION BAR -->
+  <header class="topbar">
+    <div class="brand" data-go="home" title="Home">
+      <div class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 48 48">
+          <path d="M7 27 24 17 41 27 24 37Z" fill="#fff" opacity=".95"/>
+          <path d="M7 27 24 37 24 45 7 35Z" fill="#D7F2FF"/>
+          <path d="M24 37 41 27 41 35 24 45Z" fill="#B8DDF5"/>
+          <path d="M16 13 24 8 32 13 24 18Z" fill="#FFE6A0"/>
+        </svg>
+      </div>
+      <div>
+        <strong>THE MINI ARCHITECT</strong>
+        <small id="subHeaderLabel">YEAR 4 MATHEMATICS · TOPIC 6 SPACE</small>
+      </div>
+    </div>
+
+    <nav class="nav" aria-label="Main navigation">
+      <button class="active" data-nav="home" id="navHome">Home</button>
+      <button data-nav="map" id="navMap">Town Map</button>
+      <button data-nav="how" id="navHow">Guide</button>
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <button class="tool-btn-small" id="soundToggle" title="Toggle Sound">
+        🔊 <span id="soundLabel">Sound ON</span>
+      </button>
+      <div class="star-pill">
+        <span class="star-icon">★</span>
+        <span id="starCount">0</span> / 5 STARS
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- 1. HOME VIEW -->
+    <section id="homeView" class="view active">
+      <div class="hero">
+        <div>
+          <div class="eyebrow" id="heroEyebrow">REAL-WORLD MATHEMATICAL ADVENTURE</div>
+          <h1 id="heroHeading">THE MINI<br><span>ARCHITECT</span></h1>
+          <p id="heroDesc">Welcome, Young Architect! Put on your hardhat and help build Mini Architect Town. Calculate garden perimeter fences, floor surfaces, lush gardens, warehouse freight, and gift packages using your Space mathematics skills!</p>
+          <div class="flex gap-2 flex-wrap mb-5">
+            <span class="curriculum-tag" id="tag1">Standard 6.3: Perimeter & Area</span>
+            <span class="curriculum-tag" id="tag2">Standard 6.4: Volume of Solids</span>
+            <span class="curriculum-tag" id="tag3">Year 4 KSSR Semakan</span>
+          </div>
+          <div class="flex gap-3 flex-wrap">
+            <button class="primary-btn" id="startBtn">Enter Town Map →</button>
+            <button class="secondary-btn" id="howBtn">Architect's Guide</button>
+          </div>
+        </div>
+        <div class="hero-art" id="heroArt"></div>
+      </div>
+
+      <div class="section-head">
+        <div>
+          <h2 id="sitesHeading">Your 5 Construction Sites</h2>
+          <p id="sitesDesc">Apply formulae and unit grids to solve real engineering challenges.</p>
+        </div>
+        <span class="badge-count" id="projBadge">5 ADVENTURE PROJECTS</span>
+      </div>
+
+      <div class="mission-grid" id="homeMissions"></div>
+
+      <div class="info-strip">
+        <div class="info-box">
+          <div class="info-icon" style="background:#e3f3ff">📏</div>
+          <div>
+            <strong id="infoPerimTitle">Perimeter & Boundary (m)</strong>
+            <small id="infoPerimSub">Rectangle Boundary: P = 2 × (Length + Width)</small>
+          </div>
+        </div>
+        <div class="info-box">
+          <div class="info-icon" style="background:#e4f8ed">📐</div>
+          <div>
+            <strong id="infoAreaTitle">Area & Unit Squares (m²)</strong>
+            <small id="infoAreaSub">Rectangle (l × w), Square (s × s), Triangle (½ b × h)</small>
+          </div>
+        </div>
+        <div class="info-box">
+          <div class="info-icon" style="background:#fff3d2">🧊</div>
+          <div>
+            <strong id="infoVolTitle">Volume & Unit Cubes (cm³)</strong>
+            <small id="infoVolSub">Cuboid (l × w × h) & Cube (s × s × s)</small>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. TOWN MAP VIEW -->
+    <section id="mapView" class="view">
+      <div class="page-title">
+        <div>
+          <div class="eyebrow" id="mapEyebrow">MINI ARCHITECT TOWN DISTRICT</div>
+          <h1 id="mapHeading">Town Construction Map</h1>
+          <p id="mapSub">Select any construction project to inspect the blueprint and calculate measurements.</p>
+        </div>
+        <button class="back-btn" data-go="home" id="mapBackBtn">← Back Home</button>
+      </div>
+
+      <div class="map-canvas-card">
+        <div class="town-island-art" id="townIslandArt"></div>
+      </div>
+
+      <div class="map-grid" id="mapGrid"></div>
+    </section>
+
+    <!-- 3. HOW TO PLAY VIEW -->
+    <section id="howView" class="view">
+      <div class="page-title">
+        <div>
+          <div class="eyebrow" id="guideEyebrow">ARCHITECT'S FIELD GUIDE</div>
+          <h1 id="guideHeading">How to Play & Learn</h1>
+          <p id="guideSub">Master the fundamental steps to build a thriving mathematical community.</p>
+        </div>
+        <button class="back-btn" data-go="home" id="howBackBtn">← Back Home</button>
+      </div>
+
+      <div class="how-grid" id="howGridCards"></div>
+
+      <div class="story-card style-card" style="padding:22px;margin-top:18px">
+        <strong style="color:var(--navy);font-size:15px;display:flex;align-items:center;gap:8px" id="refTitle">
+          <span>📚</span> Mathematical Standards Reference Guide (Year 4 KSSR)
+        </strong>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:14px">
+          <div style="background:#f6fafd;padding:14px;border-radius:14px;border:1px solid #e1effa">
+            <b style="color:var(--blue-dark);font-size:13px">Standard 6.3: Perimeter & Area</b>
+            <p style="color:var(--muted);font-size:12px;line-height:1.6;margin:6px 0 0" id="refArea">
+              • <strong>Perimeter of Rectangle:</strong> Perimeter = 2 × (Length + Width)<br>
+              • <strong>Area of Rectangle & Square:</strong> Area = Length × Width<br>
+              • <strong>Area of Triangle:</strong> Area = ½ × Base × Perpendicular Height<br>
+              • Perimeter measured in linear units (m, cm).<br>
+              • Area measured in square units (m², cm²).
+            </p>
+          </div>
+          <div style="background:#f6fbf8;padding:14px;border-radius:14px;border:1px solid #dcf1e5">
+            <b style="color:var(--mint-dark);font-size:13px">Standard 6.4.1: Volume</b>
+            <p style="color:var(--muted);font-size:12px;line-height:1.6;margin:6px 0 0" id="refVol">
+              • <strong>Cuboid:</strong> Volume = Length × Width × Height<br>
+              • <strong>Cube:</strong> Volume = Side × Side × Side<br>
+              • Volume is expressed in cubic units (cm³, m³).
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. ACTIVE MISSION PLAYGROUND VIEW -->
+    <section id="missionView" class="view">
+      <div class="page-title">
+        <div>
+          <div class="eyebrow" id="missionKicker">MISSION 01 · AREA</div>
+          <h1 id="missionTitle">Build the Classroom Floor</h1>
+          <p id="missionSubtitle">Apply area calculation to a real-world classroom renovation.</p>
+        </div>
+        <button class="back-btn" data-go="map" id="missionBackBtn">← Back to Map</button>
+      </div>
+
+      <div class="mission-progress" id="missionProgress"></div>
+
+      <div class="mission-layout">
+        <!-- Left: Isometric Visualizer -->
+        <section class="scene-card">
+          <div class="scene-head">
+            <strong id="sceneTitle">
+              <span>🏗️</span> SCHOOL CONSTRUCTION SITE
+            </strong>
+            <span class="site-badge" id="sceneStatus">BLUEPRINT STAGE</span>
+          </div>
+
+          <div class="scene-toolbar">
+            <span id="visTitle">Interactive Isometric Visualizer</span>
+            <div class="scene-toggle-btns" id="sceneToggles"></div>
+          </div>
+
+          <div class="archie-speech">
+            <div class="archie-avatar">👷</div>
+            <p class="archie-text" id="archieTip">
+              <strong>Archie says:</strong> "Carefully check the dimensions on the plan before typing your calculation!"
+            </p>
+          </div>
+
+          <div class="scene-wrap" id="sceneWrap">
+            <div id="sceneArt"></div>
+          </div>
+          <div class="scene-caption" id="sceneCaption">Study the construction plan before making your mathematical decision.</div>
+        </section>
+
+        <!-- Right: Task & Mathematical Interaction -->
+        <section class="task-card">
+          <div class="task-kicker" id="taskKicker">REAL-WORLD CHALLENGE</div>
+          <h2 id="taskTitle">Calculate the floor area</h2>
+          <p class="scenario" id="taskScenario"></p>
+
+          <div class="dimension-row" id="dimensions"></div>
+
+          <div class="problem-box">
+            <strong id="archTaskLabel">Your Architect's Task:</strong>
+            <p id="taskPrompt"></p>
+          </div>
+
+          <div class="formula-line" id="formulaLine">
+            <span class="icon">📐</span>
+            <span id="formulaText"></span>
+          </div>
+
+          <div id="answerFields"></div>
+
+          <div class="action-row">
+            <button class="check-btn" id="checkBtn">Check Answer ✓</button>
+            <button class="hint-btn" id="hintBtn">💡 Need a Hint?</button>
+          </div>
+
+          <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
+          <div class="explain" id="explanation"></div>
+
+          <div class="build-panel" id="buildPanel">
+            <strong id="approvedLabel">🎉 Calculation Approved by Chief Engineer!</strong>
+            <p id="buildMessage">The construction team is standing by to build this project.</p>
+            <button class="next-btn" id="buildBtn">Start Construction →</button>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <!-- 5. COMPLETION & CELEBRATION VIEW -->
+    <section id="completeView" class="view">
+      <div class="completion">
+        <div class="trophy">🏆</div>
+        <div class="eyebrow" id="compEyebrow">TOWN CONSTRUCTION COMPLETE!</div>
+        <h1 id="compHeading">Master Architect of Year 4!</h1>
+        <p id="compDesc">Congratulations! You solved all four real-world Space challenges with mathematical precision. Mini Architect Town is now fully renovated and thriving!</p>
+
+        <div class="stat-row">
+          <div class="stat">
+            <strong id="finalStars">5</strong>
+            <small id="lblStars">STARS EARNED</small>
+          </div>
+          <div class="stat">
+            <strong style="color:var(--mint-dark)">5 / 5</strong>
+            <small id="lblBuilt">PROJECTS BUILT</small>
+          </div>
+          <div class="stat">
+            <strong style="color:var(--purple)">100%</strong>
+            <small id="lblAcc">ACCURACY TARGET</small>
+          </div>
+        </div>
+
+        <div class="town-showcase">
+          <h3 style="margin:0 0 10px;color:var(--navy);font-size:16px" id="showcaseTitle">The Completed Mini Architect Town</h3>
+          <div id="townCompleteArt" style="max-height:260px"></div>
+        </div>
+
+        <div class="flex gap-3 justify-center flex-wrap">
+          <button class="primary-btn" id="viewTownBtn">Explore the Town Map 🗺️</button>
+          <button class="secondary-btn" id="restartBtn">Replay All Missions ↺</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="footer" id="footerText">
+    THE MINI ARCHITECT · YEAR 4 MATHEMATICS · TOPIC 6.0 SPACE · CONTENT STANDARDS 6.3 & 6.4
+  </div>
+</div>
+
+<!-- Custom Modal Dialog Confirmation -->
+<div class="modal-overlay" id="customModal">
+  <div class="modal-box">
+    <h3 id="modalTitle">Reset Progress?</h3>
+    <p id="modalMsg">Are you sure you want to reset all project progress and replay?</p>
+    <div class="modal-actions">
+      <button class="secondary-btn" id="modalCancel">Cancel</button>
+      <button class="primary-btn" id="modalConfirm" style="background:#e06853">Yes, Reset</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ==========================================================================
+   WEB AUDIO API SOUND GENERATOR (Zero External Dependencies)
+   ========================================================================== */
+let audioCtx = null;
+let soundEnabled = true;
+
+function initAudio() {
+  if (!audioCtx) {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (AudioContext) audioCtx = new AudioContext();
+  }
+  if (audioCtx && audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+}
+
+function playSound(type) {
+  if (!soundEnabled) return;
+  initAudio();
+  if (!audioCtx) return;
+
+  const now = audioCtx.currentTime;
+
+  if (type === 'click') {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(480, now);
+    osc.frequency.exponentialRampToValueAtTime(320, now + 0.08);
+    gain.gain.setValueAtTime(0.12, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start(now);
+    osc.stop(now + 0.08);
+  } else if (type === 'hint') {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(520, now);
+    osc.frequency.exponentialRampToValueAtTime(780, now + 0.16);
+    gain.gain.setValueAtTime(0.15, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start(now);
+    osc.stop(now + 0.16);
+  } else if (type === 'correct') {
+    const notes = [523.25, 659.25, 783.99, 1046.50];
+    notes.forEach((freq, idx) => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+      gain.gain.setValueAtTime(0.14, now + idx * 0.08);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.22);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now + idx * 0.08);
+      osc.stop(now + idx * 0.08 + 0.24);
+    });
+  } else if (type === 'wrong') {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(260, now);
+    osc.frequency.exponentialRampToValueAtTime(190, now + 0.25);
+    gain.gain.setValueAtTime(0.12, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start(now);
+    osc.stop(now + 0.26);
+  } else if (type === 'build') {
+    for (let i = 0; i < 4; i++) {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(320 + i * 90, now + i * 0.07);
+      gain.gain.setValueAtTime(0.12, now + i * 0.07);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.07 + 0.08);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now + i * 0.07);
+      osc.stop(now + i * 0.07 + 0.09);
+    }
+  } else if (type === 'fanfare') {
+    const chord = [523.25, 659.25, 783.99, 1046.50, 1318.5];
+    chord.forEach((freq, idx) => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now + idx * 0.09);
+      gain.gain.setValueAtTime(0.16, now + idx * 0.09);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.09 + 0.65);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now + idx * 0.09);
+      osc.stop(now + idx * 0.09 + 0.7);
+    });
+  }
+}
+
+/* ==========================================================================
+   CONFETTI ENGINE
+   ========================================================================== */
+const canvas = document.getElementById("confettiCanvas");
+const ctx = canvas.getContext("2d");
+let confetti = [];
+let animFrameId = null;
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
+
+function launchConfetti() {
+  confetti = [];
+  const colors = ["#4ab2e8", "#3ec985", "#ffd24d", "#ff7a63", "#a078f0", "#ff8ec6"];
+  for (let i = 0; i < 110; i++) {
+    confetti.push({
+      x: canvas.width * 0.5 + (Math.random() * 200 - 100),
+      y: canvas.height * 0.4 + (Math.random() * 100 - 50),
+      w: Math.random() * 9 + 5,
+      h: Math.random() * 6 + 4,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      vx: (Math.random() - 0.5) * 14,
+      vy: Math.random() * -12 - 4,
+      gravity: 0.38,
+      rotation: Math.random() * 360,
+      vRot: (Math.random() - 0.5) * 10,
+      opacity: 1
+    });
+  }
+  if (!animFrameId) {
+    updateConfetti();
+  }
+}
+
+function updateConfetti() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  let active = false;
+  for (let p of confetti) {
+    p.x += p.vx;
+    p.vy += p.gravity;
+    p.y += p.vy;
+    p.rotation += p.vRot;
+    if (p.y > canvas.height * 0.6) {
+      p.opacity -= 0.016;
+    }
+    if (p.opacity > 0) {
+      active = true;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate((p.rotation * Math.PI) / 180);
+      ctx.globalAlpha = Math.max(0, p.opacity);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      ctx.restore();
+    }
+  }
+  if (active) {
+    animFrameId = requestAnimationFrame(updateConfetti);
+  } else {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    animFrameId = null;
+  }
+}
+
+/* ==========================================================================
+   MISSION DATABASE & GUIDE CONTENT (ENGLISH)
+   ========================================================================== */
+const missions = [
+  {
+    id: 1, tag: "MISSION 01 · PERIMETER OF RECTANGLE", standard: "Standard KSSR 6.3.1",
+    title: "The Garden Fence Challenge", short: "Calculate the total perimeter fencing required to enclose a rectangular garden.",
+    site: "COMMUNITY PARK SITE", scene: "fence", color: "#e3f6ed",
+    scenario: "The town landscape architect needs to build a wooden protective fence around a rectangular community garden plot. Determine the total length of fencing required to completely surround all 4 sides.",
+    dims: [["Length (l)", "8 m"], ["Width (w)", "5 m"], ["Shape", "Rectangle"]],
+    prompt: "What is the total perimeter length of fencing needed to surround the entire garden?",
+    formula: "Perimeter of a rectangle = 2 × (Length + Width)",
+    fields: [{ id: "perimeter", label: "Total fence perimeter", unit: "m", answer: 26, placeholder: "e.g. 26" }],
+    hint: "Perimeter is the distance ALL THE WAY AROUND the shape boundary! Add 8 + 5 = 13 m (halfway around), then multiply by 2 for all 4 sides.",
+    explain: [
+      "Perimeter vs. Area: Perimeter is the total distance around the outer boundary, while Area is the space inside.",
+      "Formula: Perimeter = 2 × (Length + Width) or (Length + Width + Length + Width)",
+      "Substitute values: 2 × (8 m + 5 m) = 2 × 13 m",
+      "Calculate: 26 m",
+      "Conclusion: Exactly 26 metres of wooden fencing are required to enclose the garden boundary."
+    ],
+    archieTip: "Remember: Perimeter measures the outer edge line (m), while Area measures surface coverage (m²)!",
+    build: "Wooden posts and rails locked into place around all 26 metres of garden perimeter. Garden boundary secured!",
+    action: "Erect Wooden Fence",
+    modes: [
+      { id: "boundary", label: "Boundary Blueprint", desc: "Highlight 4 outer fence sides" },
+      { id: "finish", label: "Finished Fence", desc: "View built wooden fence" }
+    ]
+  },
+  {
+    id: 2, tag: "MISSION 02 · AREA OF RECTANGLE", standard: "Standard KSSR 6.3.2",
+    title: "Build the Classroom Floor", short: "Calculate the floor area of a rectangular classroom to order flooring tiles.",
+    site: "SUNNYVALE SCHOOL SITE", scene: "school", color: "#e8f4fd",
+    scenario: "Sunnyvale Elementary School is renovating its Year 4 classroom. The architect needs to know the exact floor surface area to order the correct amount of ceramic floor tiles.",
+    dims: [["Length (l)", "8 m"], ["Width (w)", "6 m"], ["Shape", "Rectangle"]],
+    prompt: "What is the total area of the rectangular classroom floor?",
+    formula: "Area of a rectangle = length × width",
+    fields: [{ id: "area", label: "Classroom floor area", unit: "m²", answer: 48, placeholder: "e.g. 48" }],
+    hint: "Multiply length by width: 8 m × 6 m. Think of 8 rows with 6 square tiles in each row!",
+    explain: [
+      "Formula: Area = length × width",
+      "Substitute measurements: 8 m × 6 m",
+      "Calculate: 8 × 6 = 48 m²",
+      "Conclusion: The classroom floor covers exactly 48 square metres. 48 unit tiles are required!"
+    ],
+    archieTip: "Remember: Area is 2D surface coverage, so our answer is written in square metres (m²)!",
+    build: "Ceramic floor tiles installed perfectly across all 48 square metres. Sunnyvale School is ready!",
+    action: "Install Floor Tiles",
+    modes: [
+      { id: "grid", label: "Count 8×6 Grid", desc: "View the 48 unit-square tiles" },
+      { id: "finish", label: "Finished Classroom", desc: "View decorated classroom" }
+    ]
+  },
+  {
+    id: 3, tag: "MISSION 03 · COMBINED 2D AREA", standard: "Standard KSSR 6.3.2",
+    title: "Design the Dream Garden", short: "Plan a community botanical garden combining a square lawn and a triangular flower bed.",
+    site: "BOTANICAL COMMUNITY GARDEN", scene: "garden", color: "#e8f8ee",
+    scenario: "The town council is landscaping a brand new public garden. The blueprint incorporates a square turf lawn alongside a triangular tulip flower bed. Find the area of each section and their combined total area.",
+    dims: [["Square lawn side", "5 m"], ["Triangle base", "6 m"], ["Perpendicular height", "4 m"]],
+    prompt: "1) Calculate the square lawn area. 2) Calculate the triangular flower-bed area. 3) Find the combined total garden area.",
+    formula: "Square: side × side  |  Triangle: ½ × base × perpendicular height",
+    fields: [
+      { id: "lawn", label: "Square lawn area", unit: "m²", answer: 25, placeholder: "5 × 5 = ?" },
+      { id: "flower", label: "Triangular flower bed", unit: "m²", answer: 12, placeholder: "½ × 6 × 4 = ?" },
+      { id: "total", label: "Combined total area", unit: "m²", answer: 37, placeholder: "Lawn + Flower Bed" }
+    ],
+    hint: "Square lawn: 5 × 5 = 25 m². Triangular bed: ½ × 6 × 4 = 12 m². Add both together for the combined total!",
+    explain: [
+      "Square Lawn: side × side = 5 m × 5 m = 25 m²",
+      "Triangular Flower Bed: ½ × base × height = ½ × 6 m × 4 m = 12 m²",
+      "Combined Area: 25 m² + 12 m² = 37 m²",
+      "Conclusion: The landscaper requires 37 square metres of grass turf and flower soil altogether."
+    ],
+    archieTip: "For triangles, don't forget the ½! Multiply base by height, then take half of that value.",
+    build: "Lush grass rolls out and colourful tulips blossom in the triangle bed. The garden is open!",
+    action: "Plant & Bloom Garden",
+    modes: [
+      { id: "sections", label: "Inspect 2 Zones", desc: "Separate lawn and flower bed" },
+      { id: "bloomed", label: "Fully Bloomed", desc: "View blooming landscape" }
+    ]
+  },
+  {
+    id: 4, tag: "MISSION 04 · VOLUME OF CUBOID", standard: "Standard KSSR 6.4.1",
+    title: "Organise the Warehouse", short: "Calculate the cubic storage capacity of a cuboid packing crate using unit-cube layers.",
+    site: "CENTRAL CARGO WAREHOUSE", scene: "warehouse", color: "#fff3df",
+    scenario: "Cargo shipments are arriving at the town warehouse. The logistics manager needs to store unit supply boxes inside a heavy-duty cuboid crate. Find its volume to ensure maximum efficiency.",
+    dims: [["Length", "4 cm"], ["Width", "3 cm"], ["Height", "2 cm"]],
+    prompt: "What is the volume of the cuboid storage crate in cubic centimetres (cm³)?",
+    formula: "Volume of cuboid = length × width × height",
+    fields: [{ id: "volume", label: "Storage crate volume", unit: "cm³", answer: 24, placeholder: "4 × 3 × 2 = ?" }],
+    hint: "Find 1 layer first: length × width = 4 × 3 = 12 cubes. There are 2 layers in height: 12 × 2 = ?",
+    explain: [
+      "Formula: Volume = length × width × height",
+      "Base layer capacity: 4 cm × 3 cm = 12 unit cubes per layer",
+      "Multiply by height: 12 cubes × 2 layers = 24 cm³",
+      "Conclusion: The cuboid holds exactly 24 unit cubes of 1 cm³ each."
+    ],
+    archieTip: "Volume measures 3D space inside a solid! Notice how we multiply three dimensions together.",
+    build: "All 24 unit cubes stack securely into two neat layers. Warehouse storage verified!",
+    action: "Stack Warehouse Crates",
+    modes: [
+      { id: "layer1", label: "Layer 1 (12 cubes)", desc: "Show base layer" },
+      { id: "both", label: "Both 2 Layers (24 cubes)", desc: "Show complete 3D stack" }
+    ]
+  },
+  {
+    id: 5, tag: "MISSION 05 · VOLUME OF CUBE", standard: "Standard KSSR 6.4.1",
+    title: "Design the Gift Box", short: "Calculate the volume of a festive cube-shaped package for the artisan gift emporium.",
+    site: "ARTISAN GIFT EMPORIUM", scene: "gift", color: "#ffece5",
+    scenario: "The artisan gift boutique is creating premium gift boxes for the town festival. The designer needs to construct a perfect cube package with equal 3 cm edges. Determine the interior volume.",
+    dims: [["Edge length (s)", "3 cm"], ["Dimensions", "3 cm × 3 cm × 3 cm"], ["Solid shape", "Cube"]],
+    prompt: "What is the volume of the cube-shaped gift box in cubic centimetres (cm³)?",
+    formula: "Volume of a cube = side × side × side",
+    fields: [{ id: "cube", label: "Cube gift box volume", unit: "cm³", answer: 27, placeholder: "3 × 3 × 3 = ?" }],
+    hint: "A cube has equal length, width and height! Multiply: 3 × 3 = 9 (one layer), then 9 × 3 layers = ?",
+    explain: [
+      "Formula: Volume of cube = side × side × side = s³",
+      "Substitute: 3 cm × 3 cm × 3 cm",
+      "Calculate layer: 3 × 3 = 9 cubes per layer",
+      "Stack 3 layers: 9 × 3 = 27 cm³",
+      "Conclusion: The festive cube package has a volume of 27 cubic centimetres."
+    ],
+    archieTip: "Because it's a cube, all sides are equal: length = width = height = 3 cm!",
+    build: "The cube box is folded, packed with 27 cubic cm of treats, and tied with a golden satin bow!",
+    action: "Wrap & Ribbon Gift Box",
+    modes: [
+      { id: "cubes", label: "27 Unit Cubes", desc: "View 3×3×3 cube blocks" },
+      { id: "wrapped", label: "Wrapped Gift Box", desc: "View ribbon and bows" }
+    ]
+  }
+];
+
+const guideCardsEN = [
+  { icon: "🗺️", title: "1. Choose a Construction Site", text: "Access the Town Map to inspect the fence, school, garden, cargo warehouse, or gift shop." },
+  { icon: "📏", title: "2. Inspect Dimensions & Blueprint", text: "Examine the isometric blueprint diagrams carefully. Check length, width, base, height, or cube sides." },
+  { icon: "📐", title: "3. Select Mathematical Formula", text: "Use perimeter (m) for boundaries, unit squares for 2D area (m²), and unit cubes for 3D volume (cm³)." },
+  { icon: "💡", title: "4. Helpful Scaffolding & Hints", text: "If you get stuck, tap the Hint button to receive step-by-step guidance from Archie without penalty." },
+  { icon: "🏗️", title: "5. Build the Town Structure", text: "When your calculation is verified, trigger the construction sequence to see structures rise!" },
+  { icon: "⭐", title: "6. Collect Stars & Master Space", text: "Earn an Architect Star for each completed building to earn your Master Architect Diploma." }
+];
+
+/* ==========================================================================
+   STATE MANAGEMENT
+   ========================================================================== */
+let currentMissionIndex = 0;
+let stars = 0;
+let completedMissions = new Set();
+let checkedCurrent = false;
+let currentVisualMode = "default";
+
+const $ = id => document.getElementById(id);
+const views = ["homeView", "mapView", "howView", "missionView", "completeView"];
+
+function showView(viewId) {
+  views.forEach(v => $(v).classList.toggle("active", v === viewId));
+  document.querySelectorAll(".nav button").forEach(b => {
+    b.classList.toggle("active", b.dataset.nav === viewId.replace("View", ""));
+  });
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function initGuideUI() {
+  $("howGridCards").innerHTML = guideCardsEN.map(card => `
+    <div class="how-card">
+      <div class="info-icon" style="background:#e1f2fe">${card.icon}</div>
+      <b>${card.title}</b>
+      <p>${card.text}</p>
+    </div>
+  `).join("");
+}
+
+/* ==========================================================================
+   ISOMETRIC SVG VECTOR ENGINE
+   ========================================================================== */
+
+function isoCube(x, y, s, top = "#a6e1fa", left = "#68bfe8", right = "#3394c8", stroke = "#216a94") {
+  const hW = s * 0.866;
+  const hH = s * 0.5;
+  const pTop = `${x},${y - s} ${x + hW},${y - hH} ${x},${y} ${x - hW},${y - hH}`;
+  const pLeft = `${x - hW},${y - hH} ${x},${y} ${x},${y + s} ${x - hW},${y + hH}`;
+  const pRight = `${x + hW},${y - hH} ${x},${y} ${x},${y + s} ${x + hW},${y + hH}`;
+
+  return `
+    <g class="iso-cube">
+      <polygon points="${pTop}" fill="${top}" stroke="${stroke}" stroke-width="1.2" stroke-linejoin="round"/>
+      <polygon points="${pLeft}" fill="${left}" stroke="${stroke}" stroke-width="1.2" stroke-linejoin="round"/>
+      <polygon points="${pRight}" fill="${right}" stroke="${stroke}" stroke-width="1.2" stroke-linejoin="round"/>
+    </g>
+  `;
+}
+
+function renderMissionSceneSVG(index, mode = "default", isCompleted = false) {
+  let content = "";
+
+  if (index === 0) {
+    // MISSION 1: GARDEN FENCE PERIMETER (8m length x 5m width = 26m perimeter)
+    const isBuilt = isCompleted || mode === "finish";
+    const fenceColor = isBuilt ? "#8b5a2b" : "#d9aa77";
+    const postColor = isBuilt ? "#5c3a19" : "#a67344";
+
+    content = `
+      <svg viewBox="0 0 520 340" role="img" aria-label="Garden fence perimeter plan">
+        <!-- Ground Patch -->
+        <polygon points="120,180 260,110 400,180 260,250" fill="#aee2b8" stroke="#68ba7a" stroke-width="2"/>
+        <polygon points="145,180 260,123 375,180 260,237" fill="#6bc97c"/>
+        
+        <!-- Outer Fence Posts & Rails (Perimeter Highlighted) -->
+        <g stroke="${fenceColor}" stroke-width="${isBuilt ? '4' : '3'}" fill="none">
+          <!-- Back Left Rail (8m) -->
+          <line x1="120" y1="180" x2="260" y2="110"/>
+          <!-- Back Right Rail (5m) -->
+          <line x1="260" y1="110" x2="400" y2="180"/>
+          <!-- Front Right Rail (8m) -->
+          <line x1="400" y1="180" x2="260" y2="250"/>
+          <!-- Front Left Rail (5m) -->
+          <line x1="260" y1="250" x2="120" y2="180"/>
+        </g>
+        
+        <!-- Vertical Fence Pickets -->
+        <g fill="${postColor}">
+          <rect x="117" y="165" width="6" height="22" rx="2"/>
+          <rect x="187" y="130" width="6" height="22" rx="2"/>
+          <rect x="257" y="95" width="6" height="22" rx="2"/>
+          <rect x="327" y="130" width="6" height="22" rx="2"/>
+          <rect x="397" y="165" width="6" height="22" rx="2"/>
+          <rect x="327" y="200" width="6" height="22" rx="2"/>
+          <rect x="257" y="235" width="6" height="22" rx="2"/>
+          <rect x="187" y="200" width="6" height="22" rx="2"/>
+        </g>
+
+        <!-- Dimension Lines & Text Labels -->
+        <g stroke="#1e5e89" stroke-width="2">
+          <!-- Length 8 m -->
+          <line x1="110" y1="172" x2="250" y2="102"/>
+          <text x="175" y="130" fill="#144d73" font-size="12" font-weight="900" transform="rotate(-26 175 130)" text-anchor="middle">Length = 8 m</text>
+
+          <!-- Width 5 m -->
+          <line x1="270" y1="102" x2="410" y2="172"/>
+          <text x="345" y="130" fill="#144d73" font-size="12" font-weight="900" transform="rotate(26 345 130)" text-anchor="middle">Width = 5 m</text>
+          
+          <!-- Opposite Sides Indicator -->
+          <text x="345" y="225" fill="#144d73" font-size="11" font-weight="800" transform="rotate(-26 345 225)" text-anchor="middle">Opposite Length = 8 m</text>
+          <text x="175" y="225" fill="#144d73" font-size="11" font-weight="800" transform="rotate(26 175 225)" text-anchor="middle">Opposite Width = 5 m</text>
+        </g>
+
+        <!-- Flower Accents in Center -->
+        <circle cx="250" cy="175" r="5" fill="#ff6b8b"/>
+        <circle cx="270" cy="185" r="5" fill="#ffca36"/>
+        <circle cx="260" cy="165" r="4" fill="#9b51e0"/>
+
+        <g transform="translate(150,295)">
+          <rect width="220" height="30" rx="10" fill="#ffffff" stroke="#3aa0d8" stroke-width="2"/>
+          <text x="110" y="20" fill="#206994" font-size="12" font-weight="900" text-anchor="middle">Perimeter = 2 × (8 + 5) = 26 m</text>
+        </g>
+      </svg>
+    `;
+  } else if (index === 1) {
+    const isBuilt = isCompleted || mode === "finish";
+    let tiles = "";
+    const ox = 260, oy = 115, sx = 20, sy = 11.5;
+    for (let r = 0; r < 6; r++) {
+      for (let c = 0; c < 8; c++) {
+        const x = ox + (c - r) * sx;
+        const y = oy + (c + r) * sy;
+        const fill = isBuilt
+          ? ((r + c) % 2 === 0 ? "#74bfe6" : "#57add6")
+          : ((r + c) % 2 === 0 ? "#e2f2fc" : "#cde5f7");
+        tiles += `<polygon points="${x},${y} ${x + sx},${y + sy} ${x},${y + sy * 2} ${x - sx},${y + sy}" fill="${fill}" stroke="#98c7e0" stroke-width="0.8"/>`;
+      }
+    }
+
+    content = `
+      <svg viewBox="0 0 520 340" role="img" aria-label="Classroom floor plan">
+        <defs>
+          <linearGradient id="wallL" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#fff5de"/><stop offset="100%" stop-color="#f6dfb6"/></linearGradient>
+          <linearGradient id="wallR" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#faeccd"/><stop offset="100%" stop-color="#ecd19d"/></linearGradient>
+        </defs>
+        <polygon points="140,184 260,115 260,25 140,94" fill="url(#wallL)" stroke="#cbaf7e" stroke-width="2"/>
+        <polygon points="260,115 420,207 420,117 260,25" fill="url(#wallR)" stroke="#cbaf7e" stroke-width="2"/>
+        <polygon points="295,105 375,151 375,95 295,49" fill="#cbeeff" stroke="#9bc5dc" stroke-width="2"/>
+        <line x1="335" y1="128" x2="335" y2="72" stroke="#9bc5dc" stroke-width="2"/>
+        <polygon points="160,150 235,107 235,62 160,105" fill="#325a4c" stroke="#caa270" stroke-width="2.5"/>
+        <text x="196" y="105" fill="#a4dfca" font-size="9" font-weight="bold" transform="rotate(-23 196 105)" text-anchor="middle">8 m × 6 m = ?</text>
+        ${tiles}
+        <g stroke="#266d98" stroke-width="2">
+          <line x1="272" y1="108" x2="432" y2="200"/>
+          <text x="360" y="146" fill="#1b5a80" font-size="12" font-weight="900" transform="rotate(30 360 146)" text-anchor="middle">8 m</text>
+          <line x1="248" y1="108" x2="128" y2="177"/>
+          <text x="175" y="136" fill="#1b5a80" font-size="12" font-weight="900" transform="rotate(-30 175 136)" text-anchor="middle">6 m</text>
+        </g>
+        <g transform="translate(190,295)">
+          <rect width="140" height="30" rx="10" fill="#ffffff" stroke="#3aa0d8" stroke-width="2"/>
+          <text x="70" y="20" fill="#206994" font-size="12" font-weight="900" text-anchor="middle">Area = 8 m × 6 m</text>
+        </g>
+      </svg>
+    `;
+  } else if (index === 2) {
+    content = `
+      <svg viewBox="0 0 520 340" role="img" aria-label="Botanical garden plan">
+        <polygon points="70,170 260,70 450,170 260,270" fill="#d9eedf" stroke="#a4d4af" stroke-width="2"/>
+        <g class="garden-square">
+          <polygon points="120,165 240,102 340,155 220,218" fill="#69cb7d" stroke="#3d9b51" stroke-width="2.5"/>
+          <text x="225" y="160" fill="#1e6b30" font-size="12" font-weight="900" text-anchor="middle">Square Lawn (5m × 5m)</text>
+        </g>
+        <g class="garden-triangle">
+          <polygon points="340,155 430,202 280,249" fill="#f8bfa2" stroke="#d77852" stroke-width="2.5"/>
+          <line x1="385" y1="178" x2="280" y2="249" stroke="#9c421e" stroke-width="2" stroke-dasharray="4,4"/>
+          <circle cx="340" cy="180" r="6" fill="#f94d6c"/>
+          <circle cx="370" cy="195" r="6" fill="#ffb426"/>
+          <circle cx="320" cy="215" r="6" fill="#a45beb"/>
+          <text x="350" y="270" fill="#aa4a24" font-size="11" font-weight="900" text-anchor="middle">Triangle (Base: 6m, Height: 4m)</text>
+        </g>
+        <g transform="translate(160,295)">
+          <rect width="200" height="32" rx="10" fill="#ffffff" stroke="#48b76c" stroke-width="2"/>
+          <text x="100" y="21" fill="#1b6e35" font-size="12" font-weight="900" text-anchor="middle">Total = Lawn + Bed</text>
+        </g>
+      </svg>
+    `;
+  } else if (index === 3) {
+    let blocks = "";
+    const showLayer2 = mode !== "layer1";
+    const layers = showLayer2 ? 2 : 1;
+
+    for (let z = 0; z < layers; z++) {
+      for (let y = 0; y < 3; y++) {
+        for (let x = 0; x < 4; x++) {
+          const px = 250 + (x - y) * 28;
+          const py = 195 + (x + y) * 15 - z * 32;
+          const topC = z === 1 ? "#ffe7a8" : "#f5d185";
+          const leftC = z === 1 ? "#f7c768" : "#e4ab4b";
+          const rightC = z === 1 ? "#d49f3e" : "#bd8325";
+          blocks += isoCube(px, py, 22, topC, leftC, rightC, "#9a6514");
+        }
+      }
+    }
+
+    content = `
+      <svg viewBox="0 0 520 340" role="img" aria-label="Warehouse storage blocks">
+        <polygon points="150,225 290,145 410,210 270,290" fill="#c49767" stroke="#875828" stroke-width="2.5"/>
+        ${blocks}
+        <g stroke="#1e5e89" stroke-width="2">
+          <text x="345" y="270" fill="#144d73" font-size="12" font-weight="900">L: 4 cm</text>
+          <text x="145" y="270" fill="#144d73" font-size="12" font-weight="900">W: 3 cm</text>
+          <text x="100" y="190" fill="#9c5409" font-size="12" font-weight="900">H: 2 cm</text>
+        </g>
+        <g transform="translate(170,300)">
+          <rect width="180" height="30" rx="10" fill="#ffffff" stroke="#e09e32" stroke-width="2"/>
+          <text x="90" y="20" fill="#9a5a04" font-size="12" font-weight="900" text-anchor="middle">Volume = 4 × 3 × 2 cm³</text>
+        </g>
+      </svg>
+    `;
+  } else {
+    const showRibbon = mode === "wrapped" || isCompleted;
+    let cubes = "";
+    for (let z = 0; z < 3; z++) {
+      for (let y = 0; y < 3; y++) {
+        for (let x = 0; x < 3; x++) {
+          const px = 260 + (x - y) * 26;
+          const py = 195 + (x + y) * 14 - z * 28;
+          cubes += isoCube(px, py, 20, "#f8c7e0", "#ea96c1", "#cc6c9c", "#9f4371");
+        }
+      }
+    }
+
+    content = `
+      <svg viewBox="0 0 520 340" role="img" aria-label="Gift package cube">
+        <polygon points="160,240 260,180 360,240 260,300" fill="#e9e2fb" stroke="#bfb2e2" stroke-width="2"/>
+        ${cubes}
+        ${showRibbon ? `
+          <g class="gift-ribbon">
+            <path d="M260,82 L260,265" stroke="#ffce38" stroke-width="12" opacity="0.9" stroke-linecap="round"/>
+            <path d="M185,188 L335,188" stroke="#ffce38" stroke-width="12" opacity="0.9" stroke-linecap="round"/>
+            <path d="M260,80 Q230,45 220,65 Q220,85 260,85 Q290,45 300,65 Q300,85 260,85" fill="#ffe169" stroke="#d49a0d" stroke-width="2.5"/>
+            <circle cx="260" cy="82" r="7" fill="#f4ad15"/>
+          </g>
+        ` : ``}
+        <g stroke="#893263" stroke-width="2">
+          <text x="340" y="255" fill="#752250" font-size="11.5" font-weight="900">3 cm</text>
+          <text x="145" y="255" fill="#752250" font-size="11.5" font-weight="900">3 cm</text>
+          <text x="135" y="170" fill="#752250" font-size="11.5" font-weight="900">3 cm</text>
+        </g>
+        <g transform="translate(170,300)">
+          <rect width="180" height="30" rx="10" fill="#ffffff" stroke="#c95f96" stroke-width="2"/>
+          <text x="90" y="20" fill="#8d295e" font-size="12" font-weight="900" text-anchor="middle">Cube = 3 × 3 × 3 cm³</text>
+        </g>
+      </svg>
+    `;
+  }
+  return content;
+}
+
+function heroSceneSVG() {
+  return `
+    <svg viewBox="0 0 520 340" role="img" aria-label="Town Hero scene">
+      <polygon points="60,200 260,90 460,200 260,310" fill="#cdeada" stroke="#87c7a0" stroke-width="2.5"/>
+      <polygon points="260,90 290,105 180,265 150,250" fill="#dde7ed"/>
+      <polygon points="120,165 400,230 380,245 100,180" fill="#dde7ed"/>
+      ${isoCube(180, 160, 48, "#9edcf3", "#60b7e2", "#328ebf")}
+      ${isoCube(310, 145, 42, "#ffe59e", "#f3ca60", "#d19a27")}
+      <polygon points="210,240 260,215 310,240 260,265" fill="#69cb7d" stroke="#3b994e" stroke-width="2"/>
+      ${isoCube(340, 220, 36, "#fbbdcf", "#e8809e", "#c55275")}
+      <g stroke="#f39c12" stroke-width="4" stroke-linecap="round">
+        <line x1="380" y1="130" x2="380" y2="40"/>
+        <line x1="330" y1="40" x2="430" y2="40"/>
+        <line x1="410" y1="40" x2="410" y2="70"/>
+      </g>
+      <circle cx="410" cy="74" r="5" fill="#e67e22"/>
+      <g transform="translate(235, 140)">
+        <rect x="12" y="16" width="16" height="18" rx="5" fill="#3a8fd4"/>
+        <circle cx="20" cy="10" r="8" fill="#ffd59e"/>
+        <path d="M10,9 Q20,-2 30,9 Z" fill="#fbc531"/>
+      </g>
+    </svg>
+  `;
+}
+
+function renderTownIslandSVG() {
+  const c1 = completedMissions.has(0);
+  const c2 = completedMissions.has(1);
+  const c3 = completedMissions.has(2);
+  const c4 = completedMissions.has(3);
+  const c5 = completedMissions.has(4);
+
+  return `
+    <svg viewBox="0 0 680 340" role="img" aria-label="Town Island Map">
+      <polygon points="80,180 340,50 600,180 340,310" fill="#aee0c2" stroke="#68b488" stroke-width="3"/>
+      <polygon points="80,180 340,310 340,335 80,205" fill="#71a986"/>
+      <polygon points="600,180 340,310 340,335 600,205" fill="#5b8d6f"/>
+      <polygon points="340,50 365,62 185,270 160,258" fill="#e7edf2"/>
+      <polygon points="140,150 540,210 520,225 120,165" fill="#e7edf2"/>
+
+      <!-- PLOT 1: GARDEN FENCE (Far Left) -->
+      <g class="map-plot" onclick="openMission(0)" style="cursor:pointer">
+        <polygon points="120,165 180,135 220,155 160,185" fill="${c1 ? '#c8f7d6' : '#f0f3f6'}" stroke="#3ebc6c" stroke-width="2"/>
+        ${c1 ? `<polygon points="135,165 180,143 205,155 160,177" fill="none" stroke="#8b5a2b" stroke-width="2.5"/>` : `<text x="170" y="160" fill="#7389a0" font-size="9.5" font-weight="900" text-anchor="middle">🚧 1. Fence</text>`}
+      </g>
+
+      <!-- PLOT 2: SCHOOL (Top Center) -->
+      <g class="map-plot" onclick="openMission(1)" style="cursor:pointer">
+        <polygon points="230,120 300,85 340,105 270,140" fill="${c2 ? '#c8ebff' : '#f0f3f6'}" stroke="#3ea5de" stroke-width="2"/>
+        ${c2 ? isoCube(280, 100, 28, "#a4e1fa", "#5ab9e6", "#2986b6") : `<text x="285" y="115" fill="#7389a0" font-size="9.5" font-weight="900" text-anchor="middle">🚧 2. School</text>`}
+      </g>
+
+      <!-- PLOT 3: BOTANICAL GARDEN (Bottom Left) -->
+      <g class="map-plot" onclick="openMission(2)" style="cursor:pointer">
+        <polygon points="210,230 290,190 350,220 270,260" fill="${c3 ? '#b8eec9' : '#f0f3f6'}" stroke="#3ebc6c" stroke-width="2"/>
+        ${c3 ? `<circle cx="280" cy="225" r="14" fill="#3db96b"/><circle cx="272" cy="220" r="4" fill="#ff5e7a"/>` : `<text x="280" y="230" fill="#7389a0" font-size="9.5" font-weight="900" text-anchor="middle">🚧 3. Garden</text>`}
+      </g>
+
+      <!-- PLOT 4: WAREHOUSE (Top Right) -->
+      <g class="map-plot" onclick="openMission(3)" style="cursor:pointer">
+        <polygon points="390,120 470,80 520,105 440,145" fill="${c4 ? '#ffeec4' : '#f0f3f6'}" stroke="#e5a828" stroke-width="2"/>
+        ${c4 ? isoCube(450, 95, 30, "#ffe59c", "#f3c653", "#c6911c") : `<text x="450" y="115" fill="#7389a0" font-size="9.5" font-weight="900" text-anchor="middle">🚧 4. Warehouse</text>`}
+      </g>
+
+      <!-- PLOT 5: GIFT SHOP (Bottom Right) -->
+      <g class="map-plot" onclick="openMission(4)" style="cursor:pointer">
+        <polygon points="410,215 480,180 540,210 470,245" fill="${c5 ? '#ffdbe7' : '#f0f3f6'}" stroke="#df618b" stroke-width="2"/>
+        ${c5 ? isoCube(480, 200, 28, "#fabdd0", "#e87899", "#ba4668") : `<text x="480" y="215" fill="#7389a0" font-size="9.5" font-weight="900" text-anchor="middle">🚧 5. Gift Shop</text>`}
+      </g>
+    </svg>
+  `;
+}
+
+/* ==========================================================================
+   RENDER VIEWS & LOGIC
+   ========================================================================== */
+
+function updateStarsDisplay() {
+  $("starCount").textContent = stars;
+  $("finalStars").textContent = stars;
+}
+
+function renderHome() {
+  $("heroArt").innerHTML = heroSceneSVG();
+  $("homeMissions").innerHTML = missions.map((m, i) => {
+    const isDone = completedMissions.has(i);
+    return `
+      <article class="mission-card ${isDone ? 'done-card' : ''}">
+        <div class="card-art" style="background:${m.color}">
+          ${renderMissionSceneSVG(i, 'default', isDone)}
+        </div>
+        <div class="card-body">
+          <div class="card-tag">${m.tag}</div>
+          <h3>${m.title}</h3>
+          <p>${m.short}</p>
+          <div class="card-foot">
+            <span class="card-status-pill ${isDone ? 'done' : ''}">
+              ${isDone ? '★ COMPLETED' : 'PROJECT ' + (i + 1)}
+            </span>
+            <button class="launch-btn ${isDone ? 're-launch' : ''}" onclick="openMission(${i})">
+              ${isDone ? 'Replay ↺' : 'Launch Site →'}
+            </button>
+          </div>
+        </div>
+      </article>
+    `;
+  }).join("");
+  updateStarsDisplay();
+}
+
+function renderMap() {
+  $("townIslandArt").innerHTML = renderTownIslandSVG();
+  $("mapGrid").innerHTML = missions.map((m, i) => {
+    const isDone = completedMissions.has(i);
+    return `
+      <article class="map-tile">
+        <div class="mini-scene" style="background:${m.color}">
+          ${renderMissionSceneSVG(i, 'default', isDone)}
+        </div>
+        <div>
+          <div class="card-tag">${m.tag}</div>
+          <h3>${m.title}</h3>
+          <p>${m.short}</p>
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="tile-status ${isDone ? 'done' : ''}">
+              ${isDone ? '★ Built & Operational' : '🚧 Under Construction'}
+            </span>
+            <button class="launch-btn ${isDone ? 're-launch' : ''}" onclick="openMission(${i})">
+              ${isDone ? 'Inspect ↺' : 'Enter Site →'}
+            </button>
+          </div>
+        </div>
+      </article>
+    `;
+  }).join("");
+  updateStarsDisplay();
+}
+
+function renderProgressDots() {
+  $("missionProgress").innerHTML = missions.map((m, i) => {
+    const doneClass = completedMissions.has(i) ? "done" : "";
+    const currentClass = i === currentMissionIndex ? "current" : "";
+    return `<div class="progress-dot ${doneClass} ${currentClass}" title="${m.title}"></div>`;
+  }).join("");
+}
+
+function openMission(index) {
+  playSound('click');
+  currentMissionIndex = index;
+  checkedCurrent = false;
+  currentVisualMode = "default";
+
+  const m = missions[index];
+
+  $("missionKicker").textContent = m.tag;
+  $("missionTitle").textContent = m.title;
+  $("missionSubtitle").textContent = m.short;
+  $("sceneTitle").innerHTML = `<span>🏗️</span> ${m.site}`;
+  $("sceneStatus").textContent = completedMissions.has(index) ? "PROJECT COMPLETED ✓" : "BLUEPRINT STAGE";
+  $("sceneCaption").textContent = "Study dimensions and plans above to authorize building.";
+  $("archieTip").innerHTML = `<strong>Archie:</strong> "${m.archieTip}"`;
+
+  $("sceneToggles").innerHTML = m.modes.map(mode => `
+    <button class="tool-btn ${mode.id === currentVisualMode ? 'active' : ''}" onclick="switchVisualMode('${mode.id}')">
+      ${mode.label}
+    </button>
+  `).join("");
+
+  updateSceneGraphic();
+
+  $("taskKicker").textContent = `${m.standard} · CHALLENGE`;
+  $("taskTitle").textContent = m.title;
+  $("taskScenario").textContent = m.scenario;
+  $("dimensions").innerHTML = m.dims.map(d => `
+    <div class="dimension">
+      <small>${d[0]}</small>
+      <strong>${d[1]}</strong>
+    </div>
+  `).join("");
+
+  $("taskPrompt").textContent = m.prompt;
+  $("formulaText").textContent = m.formula;
+
+  $("answerFields").innerHTML = m.fields.map(f => `
+    <div class="answer-group">
+      <label class="answer-label" for="ans-${f.id}">${f.label}</label>
+      <div class="input-with-unit">
+        <input class="answer-input" id="ans-${f.id}" type="number" step="any" min="0" placeholder="${f.placeholder}" autocomplete="off">
+        <span class="unit-badge">${f.unit}</span>
+      </div>
+      <div class="unit-note">Enter numbers only. Required unit: <strong>${f.unit}</strong></div>
+    </div>
+  `).join("");
+
+  m.fields.forEach(f => {
+    const el = $("ans-" + f.id);
+    if (el) {
+      el.addEventListener("keydown", e => {
+        if (e.key === "Enter") checkAnswer();
+      });
+    }
+  });
+
+  const fb = $("feedback");
+  fb.className = "feedback";
+  fb.textContent = "";
+
+  const exp = $("explanation");
+  exp.className = "explain";
+  exp.innerHTML = "";
+
+  $("buildPanel").className = "build-panel";
+  $("buildMessage").textContent = m.build;
+  $("buildBtn").textContent = m.action + " →";
+  $("buildBtn").onclick = buildCurrentProject;
+
+  $("checkBtn").disabled = false;
+  $("checkBtn").textContent = "Check Answer ✓";
+
+  renderProgressDots();
+  showView("missionView");
+}
+
+function switchVisualMode(modeId) {
+  playSound('click');
+  currentVisualMode = modeId;
+  document.querySelectorAll("#sceneToggles .tool-btn").forEach(btn => {
+    btn.classList.toggle("active", btn.textContent.trim().includes(modeId));
+  });
+  updateSceneGraphic();
+}
+
+function updateSceneGraphic() {
+  const isDone = completedMissions.has(currentMissionIndex);
+  $("sceneArt").innerHTML = renderMissionSceneSVG(currentMissionIndex, currentVisualMode, isDone);
+}
+
+function checkAnswer() {
+  const m = missions[currentMissionIndex];
+  const emptyField = m.fields.some(f => $("ans-" + f.id).value.trim() === "");
+
+  if (emptyField) {
+    playSound('wrong');
+    showFeedback("bad", "⚠️ Please enter your calculation in all required boxes!");
+    return;
+  }
+
+  const values = m.fields.map(f => Number($("ans-" + f.id).value));
+  const isCorrect = values.every((val, idx) => Math.abs(val - m.fields[idx].answer) < 0.001);
+
+  const exp = $("explanation");
+  exp.innerHTML = `
+    <strong style="color:var(--navy);font-size:13px;display:block;margin-bottom:6px">Step-by-Step Solution:</strong>
+    ${m.explain.map(step => `<div class="explain-step">${step}</div>`).join("")}
+  `;
+  exp.classList.add("show");
+
+  if (isCorrect) {
+    checkedCurrent = true;
+    playSound('correct');
+    launchConfetti();
+    showFeedback("good", "🌟 Spot on, Architect! Your calculation is mathematically perfect. Authorize construction now!");
+    $("buildPanel").classList.add("show");
+    $("checkBtn").disabled = true;
+  } else {
+    playSound('wrong');
+    showFeedback("bad", "❌ Not quite right yet. Review dimensions, double check your formula, and try again!");
+    $("buildPanel").classList.remove("show");
+  }
+}
+
+function showFeedback(type, message) {
+  const fb = $("feedback");
+  fb.className = "feedback " + type + " show";
+  fb.textContent = message;
+}
+
+$("hintBtn").addEventListener("click", () => {
+  playSound('hint');
+  const m = missions[currentMissionIndex];
+  showFeedback("hint", "💡 Architect Hint: " + m.hint);
+});
+
+$("checkBtn").addEventListener("click", checkAnswer);
+
+function buildCurrentProject() {
+  if (!checkedCurrent) return;
+  playSound('build');
+
+  if (!completedMissions.has(currentMissionIndex)) {
+    completedMissions.add(currentMissionIndex);
+    stars = Math.min(5, stars + 1);
+  }
+
+  updateStarsDisplay();
+  currentVisualMode = "finish";
+  updateSceneGraphic();
+
+  $("sceneStatus").textContent = "PROJECT COMPLETED ✓";
+  $("sceneCaption").textContent = missions[currentMissionIndex].build;
+  $("buildMessage").textContent = "🎉 Structure finished and registered into Mini Architect Town! You earned 1 Star.";
+
+  $("buildBtn").textContent = (completedMissions.size === 5)
+    ? "Celebrate Town Completion 🏆"
+    : "Proceed to Next Project →";
+
+  $("buildBtn").onclick = () => {
+    if (completedMissions.size === 5) {
+      celebrateTownCompletion();
+    } else {
+      renderMap();
+      showView("mapView");
+    }
+  };
+
+  renderProgressDots();
+  renderHome();
+}
+
+function celebrateTownCompletion() {
+  playSound('fanfare');
+  launchConfetti();
+  setTimeout(launchConfetti, 600);
+  $("townCompleteArt").innerHTML = renderTownIslandSVG();
+  showView("completeView");
+}
+
+/* Modal Dialog Controls */
+function showModal() {
+  $("customModal").classList.add("active");
+}
+function hideModal() {
+  $("customModal").classList.remove("active");
+}
+
+$("modalCancel").addEventListener("click", hideModal);
+$("modalConfirm").addEventListener("click", () => {
+  hideModal();
+  completedMissions.clear();
+  stars = 0;
+  renderHome();
+  renderMap();
+  showView("mapView");
+});
+
+/* ==========================================================================
+   LISTENERS & INIT
+   ========================================================================== */
+document.querySelectorAll("[data-go]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    playSound('click');
+    const target = btn.dataset.go;
+    if (target === "home") showView("homeView");
+    else if (target === "map") { renderMap(); showView("mapView"); }
+  });
+});
+
+document.querySelectorAll("[data-nav]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    playSound('click');
+    const target = btn.dataset.nav;
+    if (target === "home") showView("homeView");
+    else if (target === "map") { renderMap(); showView("mapView"); }
+    else if (target === "how") showView("howView");
+  });
+});
+
+$("startBtn").addEventListener("click", () => { playSound('click'); renderMap(); showView("mapView"); });
+$("howBtn").addEventListener("click", () => { playSound('click'); showView("howView"); });
+$("viewTownBtn").addEventListener("click", () => { playSound('click'); renderMap(); showView("mapView"); });
+$("restartBtn").addEventListener("click", () => { playSound('click'); showModal(); });
+
+$("soundToggle").addEventListener("click", () => {
+  soundEnabled = !soundEnabled;
+  $("soundLabel").textContent = soundEnabled ? "Sound ON" : "Sound OFF";
+  if (soundEnabled) playSound('click');
+});
+
+window.openMission = openMission;
+window.switchVisualMode = switchVisualMode;
+
+window.addEventListener("DOMContentLoaded", () => {
+  initGuideUI();
+  renderHome();
+  renderMap();
+});
+</script>
+</body>
+</html>
